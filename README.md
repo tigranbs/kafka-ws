@@ -18,5 +18,5 @@ Currently app is configured to publish producer messages every 10 seconds, just 
 docker-compose up -d
 ```
 
-After all services is up you can make a connection to `ws://localhost:3000` which is the default client connection for receiving Websocket connections.
+After all services is up you can make a connection to `ws://localhost:3000` which is the default client connection for receiving Websocket events.
 You can use some Google Chrome extension like [Smart Websocket Client](https://chrome.google.com/webstore/detail/smart-websocket-client/omalebghpgejjiaoknljcfmglgbpocdp) or just connect with a plain JS if you have a handy script.
