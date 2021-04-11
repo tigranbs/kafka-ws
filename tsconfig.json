@@ -15,11 +15,11 @@
     ],
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "target": "es5",
+    "target": "ESNext",
     "strict": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "outDir": "./build",
+    "outDir": "./dist",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "declaration": true,
@@ -27,7 +27,7 @@
   },
   "exclude": [
     "./node_modules/**/*",
-    "./build/**/*"
+    "./dist/**/*"
   ],
   "include": [
     "./src/**/*"

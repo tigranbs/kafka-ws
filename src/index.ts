@@ -3,11 +3,11 @@ import { WebsocketHandler } from './websocket';
 import config from './config';
 
 const wss = new WebsocketHandler({
-  port: parseInt(config.port),
+  port: parseInt(config.port, 10),
 });
 
 wss.broadcast = function broadcast(data) {
-  wss.clients.forEach(function each(client) {
+  wss.clients.forEach((client) => {
     client.send(JSON.stringify(data));
   });
 };
@@ -17,17 +17,21 @@ const kafka = new Kafka({
   brokers: [...config.kafka.brokers],
 });
 
+setInterval(async () => {
+  const producer = kafka.producer();
+  await producer.connect();
+  await producer.send({ topic: config.kafka.topics[0], messages: [{ value: 'TEST' }] });
+  await producer.disconnect();
+}, 10000);
+
 (async () => {
   const consumer = kafka.consumer({ groupId: config.kafka.consumerGroupId });
   await consumer.connect();
   await Promise.all(
-    config.kafka.topics.map(topic =>
-      consumer.subscribe({ topic: topic, fromBeginning: true }),
-    ),
+    config.kafka.topics.map((topic) => consumer.subscribe({ topic, fromBeginning: true })),
   );
   await consumer.run({
-    eachMessage: async ({ message, partition, topic }) => {
-      console.log(message, partition, topic);
+    eachMessage: async ({ message }) => {
       if (!message.value) return;
       const wsMessage = {
         value: message.value.toString(),

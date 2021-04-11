@@ -13,6 +13,4 @@ ADD . /app
 
 RUN yarn build
 
-WORKDIR /app/build
-
-CMD [ "node", "src" ]
+CMD [ "node", "dist" ]

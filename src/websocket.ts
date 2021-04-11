@@ -1,9 +1,8 @@
 import ws from 'ws';
-import config from './config';
 
 export class WebsocketHandler extends ws.Server {
   broadcast(data: Object) {
-    this.clients.forEach(function each(client) {
+    this.clients.forEach((client) => {
       client.send(JSON.stringify(data));
     });
   }
