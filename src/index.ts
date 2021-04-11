@@ -1,4 +1,4 @@
-import { Kafka } from 'kafkajs';
+import { Kafka, Consumer, Producer } from 'kafkajs';
 import { WebsocketHandler } from './websocket';
 import config from './config';
 
@@ -15,18 +15,30 @@ wss.broadcast = function broadcast(data) {
 const kafka = new Kafka({
   clientId: config.kafka.clientId,
   brokers: [...config.kafka.brokers],
+  retry: {
+    maxRetryTime: Infinity,
+  },
 });
+
+async function BrokerConnect(client: Consumer | Producer): Promise<void> {
+  try {
+    await client.connect();
+  } catch (e) {
+    console.log('Unable to connect consumer -> ', e);
+    setTimeout(BrokerConnect, 2000);
+  }
+}
 
 setInterval(async () => {
   const producer = kafka.producer();
-  await producer.connect();
+  await BrokerConnect(producer);
   await producer.send({ topic: config.kafka.topics[0], messages: [{ value: 'TEST' }] });
   await producer.disconnect();
 }, 10000);
 
 (async () => {
   const consumer = kafka.consumer({ groupId: config.kafka.consumerGroupId });
-  await consumer.connect();
+  await BrokerConnect(consumer);
   await Promise.all(
     config.kafka.topics.map((topic) => consumer.subscribe({ topic, fromBeginning: true })),
   );

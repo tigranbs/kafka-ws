@@ -3,15 +3,18 @@ version: '3.3'
 services:
   app:
     build: .
-    container_name: zookeeper
+    container_name: app
     hostname: app
-    ports: 3000:3000
+    ports:
+      - 3000:3000
     depends_on:
       - broker
       - zookeeper
+    links:
+      - broker
     environment:
       PORT: '3000'
-      KAFKA_BROKERS: 'broker:9092'
+      KAFKA_BROKERS: 'broker:29092'
       KAFKA_TOPICS: 'topic-1'
 
   zookeeper:
